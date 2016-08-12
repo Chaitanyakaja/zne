@@ -1,12 +1,13 @@
+#include <Arduino.h>
+
 float getTemp(char x){
 
     float mv;
     float cel;
     float fahr;
-    float t;
-    
+
     val = analogRead(tempPin);
-    mv = ( val/1024.0)*5000; 
+    mv = ( val/1024.0)*5000;
     cel = mv/10;
     fahr = (cel*9)/5 + 32;
     switch(x){
@@ -15,6 +16,6 @@ float getTemp(char x){
         break;
       case 'c' :
         return cel;
-        break; 
-    }  
+        break;
+    }
 }
