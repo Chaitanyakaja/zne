@@ -1,15 +1,14 @@
 #include <Arduino.h>
 
-/*******************Demo for MG-811 Gas Sensor Module V1.1*****************************
-Author:  Tiequan Shao: tiequan.shao@sandboxelectronics.com
-         Peng Wei:     peng.wei@sandboxelectronics.com
-         Modified by Leff from DFRobot, leff.wei@dfrobot.com, 2016-4-21, make the algorithm clearer to user
-Lisence: Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
- 
-Note:    This piece of source code is supposed to be used as a demostration ONLY. More
-         sophisticated calibration is required for industrial field application.
+/***************************************************************************************
+Author: Madeline Lewis-Whitfield: m.lewiswhitfield@gmail.com
+Description: Reads temp & C02 and turns on/off relay controlled fan based on the c02 levels.
 
-                                                            Sandbox Electronics    2012-05-31
+Some sample code used from:
+ http://www.dfrobot.com/wiki/index.php?title=Relay_Module_(Arduino_Compatible)_(SKU:_DFR0017)
+ http://www.instructables.com/id/ARDUINO-TEMPERATURE-SENSOR-LM35/
+ http://www.dfrobot.com/wiki/index.php?title=Relay_Module_(Arduino_Compatible)_(SKU:_DFR0017)
+ 
 **************************************Pins**********************************************/
  int relayPin = 6;
  int tempPin = 1;  //for temp
@@ -35,24 +34,25 @@ Note:    This piece of source code is supposed to be used as a demostration ONLY
 #define         REACTION_VOLTGAE             (0.059) //define the voltage drop of the sensor when move the sensor from air into 1000ppm CO2
 
 /*****************************Globals***********************************************/
+
 int c02;
 float           CO2Curve[3]  =  {ZERO_POINT_X, ZERO_POINT_VOLTAGE, (REACTION_VOLTGAE / (2.602 - 4))};
 int previous = 400;  //sets c02 start value at its lowermost reading
 int getC02();
 float MGRead(int mg_pin);
 int  MGGetPercentage(float volts, float *pcurve);
-
-float temp;
-int val;  //for temp]
-float getTemp(char x);
-
-void relayOn();
-void relayOff();
 //Two points are taken from the curve.With these two points, a line is formed which is
-//"approximately equivalent" to the original curve. You could use other methods to get more accurate slope
-
+//"approximately equivalent" to the original curve. You could use other methods to get more accurate slope.
 //CO2 Curve format:{ x, y, slope};point1: (lg400=2.602, 0.324), point2: (lg10000=4, 0.265)
 //slope = (y1-y2)(i.e.reaction voltage)/ x1-x2 = (0.324-0.265)/(log400 - log10000)
+
+float temp;
+int val;
+float getTemp(char x);
+
+void relayOn(int p);
+void relayOff();
+
 
 void setup() {
   Serial.begin(9600);                              //UART setup, baudrate = 9600bps
@@ -94,6 +94,6 @@ void loop() {
   temp = getTemp('f');//f for fahrenheit, c for celsius
   Serial.print("Temp"); //for node-red to know which sensor
   Serial.println(temp);
-//*/
+//*
   delay(1000);
 }

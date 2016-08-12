@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 int getC02(){
 
   int percentage;
